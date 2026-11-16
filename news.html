@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<script>try{if(localStorage.getItem('rommy.theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Новости игр — rommy tech</title>
+<meta name="description" content="Лента игровой индустрии с Playground.ru: последние новости, обновляемые автоматически.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23123a6b'/><text x='8' y='12' font-size='11' text-anchor='middle' fill='%23ffd24a' font-family='Tahoma'>R</text></svg>">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="wrap" id="top">
+
+<div class="banner">
+<div>
+<div class="logo">rommy <span>tech</span></div>
+<div class="sub">новости игровой индустрии · источник Playground.ru</div>
+</div>
+<div class="right">
+<a href="https://t.me/rommy_apps" style="color:#ffe9a8;text-decoration:none;font-weight:bold">@rommy_apps</a><br>
+лента обновляется сама<br>
+<button class="themebtn" type="button" id="themebtn">тема: дневная</button>
+</div>
+</div>
+
+<div class="tabs">
+<a class="tab" href="index.html">Главная</a>
+<a class="tab" href="fixes.html">Проблемы и исправления</a>
+<a class="tab" href="forum.html">Форум</a>
+<a class="tab on" href="news.html">Новости игр</a>
+<span class="tabspacer"></span>
+<span id="authslot"></span>
+</div>
+
+<div class="frame">
+
+<div class="side">
+<a class="navbtn" href="index.html#news">НОВОСТИ КАНАЛА<small>что нового у rommy</small></a>
+<a class="navbtn" href="forum.html">ФОРУМ<small>обсудить новость</small></a>
+<a class="navbtn" href="https://www.playground.ru/news">PLAYGROUND.RU<small>первоисточник</small></a>
+
+<div class="boxmini">
+<b>Обновление</b>
+Файл <code class="k">news.json</code> пересобирается роботом GitHub раз в час — прямо из RSS Playground.ru.
+</div>
+</div>
+
+<div class="main">
+
+<h2 class="sec">Новости игровой индустрии</h2>
+<div class="statusbar">
+<span id="state">загружаю ленту…</span>
+<button class="btn btn-sm" type="button" id="refresh">обновить</button>
+</div>
+
+<div class="row">
+<div class="grow">
+<label class="fl" for="q">фильтр</label>
+<input type="text" id="q" placeholder="GTA, Persona, Xbox…">
+</div>
+</div>
+
+<ul class="pglist" id="feed"></ul>
+<p class="hint" id="tail"></p>
+
+<div class="note" style="margin-top:12px">
+<b>Как это обновляется.</b> Страница тянет <code class="k">news.json</code> из своей же папки, а его обновляет GitHub Actions по расписанию:
+скрипт забирает RSS <code class="k">playground.ru/rss/news.xml</code> и коммитит свежий список. Файл воркфлоу лежит в архиве
+(<code class="k">.github/workflows/news.yml</code>) — залей его вместе с сайтом, и лента будет жить сама. Пока робот не настроен,
+показываю снимок ленты от 16.11.2026, и он всё равно открывается без интернета.
+</div>
+
+</div>
+</div>
+
+<div class="foot">
+<div class="badges">
+<div class="badge">СДЕЛАНО<br>В БЛОКНОТЕ</div>
+<div class="badge">ЛУЧШЕ ВСЕГО<br>1024×768</div>
+<div class="badge">RSS<br>ЖИВОЙ</div>
+<div class="badge">40<br>НОВОСТЕЙ</div>
+</div>
+© 2003—2026 rommy tech · лента принадлежит <a href="https://www.playground.ru/news">Playground.ru</a><br>
+Обновлено 16 ноября 2026 года · <a href="#top">наверх</a>
+</div>
+
+</div>
+<script src="news-fallback.js"></script>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(function(){
+'use strict';
+var esc=window.Rommy.esc, DATA=null, FALLBACK=window.ROMMY_NEWS||null;
+var feed=document.getElementById('feed'), state=document.getElementById('state'), tail=document.getElementById('tail');
+
+function show(meta, why){
+  DATA=meta;
+  var when=meta.updatedShow||meta.updated||'';
+  state.innerHTML='источник: <a href="https://www.playground.ru/news" target="_blank" rel="noopener">Playground.ru</a> · обновлено: '+esc(when)+
+    (why?' · <span style="color:#a03000">'+esc(why)+'</span>':'');
+  render();
+}
+
+function render(){
+  if(!DATA) return;
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var items=DATA.items.filter(function(it){
+    if(!q) return true;
+    return (it.title+' '+it.text).toLowerCase().indexOf(q)>=0;
+  });
+  feed.innerHTML=items.length?items.map(function(it){
+    return '<li><span class="ts">'+esc(it.show||'')+'</span>'+
+      '<a class="tt" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+esc(it.title)+'</a>'+
+      (it.text?'<div class="tx">'+esc(it.text)+'</div>':'')+
+      '<div class="src">playground.ru</div></li>';
+  }).join(''):'<li><div class="msg">по фильтру ничего нет</div></li>';
+  tail.textContent='показано '+items.length+' из '+DATA.items.length+' новостей';
+}
+
+function load(){
+  state.textContent='загружаю ленту…';
+  fetch('news.json?t='+Date.now(),{cache:'no-store'}).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(j){
+    if(!j.items||!j.items.length) throw new Error('пустой файл');
+    show(j,'');
+  }).catch(function(e){
+    if(FALLBACK&&FALLBACK.items&&FALLBACK.items.length){
+      show(FALLBACK,'файл news.json не прочитался — показываю снимок');
+    }else{
+      state.textContent='лента не загрузилась: '+e.message;
+      feed.innerHTML='<li><div class="msg err">Не получилось прочитать news.json. Открой страницу через веб-сервер (GitHub Pages), а не двойным кликом из архива.</div></li>';
+    }
+  });
+}
+
+document.getElementById('refresh').addEventListener('click',load);
+document.getElementById('q').addEventListener('input',render);
+if(FALLBACK&&FALLBACK.items) show(FALLBACK,'снимок ленты');
+load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<script>try{if(localStorage.getItem('rommy.theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Форум — rommy tech</title>
+<meta name="description" content="Форум по играм канала @rommy_apps: обсуждение портов, проблемы с запуском, настройки и опыт на разных телефонах.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23123a6b'/><text x='8' y='12' font-size='11' text-anchor='middle' fill='%23ffd24a' font-family='Tahoma'>R</text></svg>">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="wrap" id="top">
+
+<div class="banner">
+<div>
+<div class="logo">rommy <span>tech</span></div>
+<div class="sub">форум · обсуждение игр канала</div>
+</div>
+<div class="right">
+<a href="https://t.me/rommy_apps" style="color:#ffe9a8;text-decoration:none;font-weight:bold">@rommy_apps</a><br>
+темы, вопросы, настройки<br>
+<button class="themebtn" type="button" id="themebtn">тема: дневная</button>
+</div>
+</div>
+
+<div class="tabs">
+<a class="tab" href="index.html">Главная</a>
+<a class="tab" href="fixes.html">Проблемы и исправления</a>
+<a class="tab on" href="forum.html">Форум</a>
+<a class="tab" href="news.html">Новости игр</a>
+<span class="tabspacer"></span>
+<span id="authslot"></span>
+</div>
+
+<div class="frame">
+
+<div class="side">
+<a class="navbtn" href="#new">НОВАЯ ТЕМА<small>создать обсуждение</small></a>
+<a class="navbtn" href="fixes.html">ГАЙДЫ<small>проблемы и исправления</small></a>
+<a class="navbtn" href="index.html#games">КАТАЛОГ<small>30 игр со ссылками</small></a>
+<a class="navbtn" href="https://t.me/repack_by">ЧАТ КАНАЛА<small>@repack_by</small></a>
+
+<div class="boxmini">
+<b>Правила</b>
+Пиши по делу: модель телефона, версия Android, что именно происходит. Мат и ссылки на вирусы — мимо.
+</div>
+</div>
+
+<div class="main">
+
+<h2 class="sec">Форум: игры канала</h2>
+<div class="msg" id="localNote"></div>
+
+<div class="row">
+<div class="grow">
+<label class="fl" for="q">поиск по темам</label>
+<input type="text" id="q" placeholder="название игры или слово из темы">
+</div>
+<div>
+<label class="fl" for="gsel">игра</label>
+<select id="gsel"></select>
+</div>
+<div>
+<button class="btn btn-main" type="button" id="newBtn">новая тема</button>
+</div>
+</div>
+
+<div id="newPanel" hidden>
+<h3 style="margin-top:0">Новая тема</h3>
+<form id="fNew">
+<label class="fl" for="nGame">игра</label>
+<select id="nGame"></select>
+<label class="fl" for="nTitle">заголовок</label>
+<input type="text" id="nTitle" placeholder="Например: вылетает на заставке после 10 секунд" maxlength="90" required>
+<label class="fl" for="nText">что случилось</label>
+<textarea id="nText" placeholder="Телефон, версия Android, что уже пробовал" maxlength="2000" required></textarea>
+<div class="row">
+<button class="btn btn-main" type="submit">создать тему</button>
+<button class="btn" type="button" id="cancelNew">отмена</button>
+</div>
+</form>
+<hr style="border:none;border-top:1px dotted var(--line);margin:10px 0">
+</div>
+
+<div id="threadList"></div>
+<div id="threadView" hidden></div>
+
+<p class="hint" style="margin-top:12px">Темы хранятся в памяти этого браузера: это честный ограниченный режим без сервера. Чтобы форум стал общим для всех посетителей, нужен бэкенд (Supabase или Firebase) — место под ключи уже есть в <code class="k">config.js</code>.</p>
+
+</div>
+</div>
+
+<div class="foot">
+<div class="badges">
+<div class="badge">СДЕЛАНО<br>В БЛОКНОТЕ</div>
+<div class="badge">ЛУЧШЕ ВСЕГО<br>1024×768</div>
+<div class="badge">БЕЗ<br>МОДЕРАЦИИ</div>
+<div class="badge">НОВЫЕ<br>СООБЩЕНИЯ</div>
+</div>
+© 2003—2026 rommy tech · неофициальная страница канала <a href="https://t.me/rommy_apps">@rommy_apps</a><br>
+Обновлено 16 ноября 2026 года · <a href="#top">наверх</a>
+</div>
+
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(function(){
+'use strict';
+var GAMES=[
+ ['gta5-xhyn','GTA V (XHYN V)'],['tlou','The Last of Us'],['teardown','Teardown Mobile'],
+ ['wc3','Warcraft III: The Frozen Throne'],['wc2','Warcraft II'],['transformers','Transformers: The Game'],
+ ['justcause2','Just Cause 2'],['prototype2','Prototype 2'],['prototype','Prototype'],
+ ['nfsu','NFS Underground'],['nfsu2','NFS Underground 2'],['skyrim','Skyrim'],
+ ['gta4','GTA 4'],['gta5-bytarc','GTA 5 (BytArc)'],['gtasa-coop','GTA SA — кооп'],['gta4-rommy','GTA 4 by Rommy'],
+ ['hl2dm','Half-Life 2: Deathmatch'],['garrysmod',"Garry's Mod"],['re4','Resident Evil 4'],['swat4','SWAT 4'],
+ ['dota2','Dota 2'],['stray','Stray'],['inside','Inside'],['sh4','Silent Hill 4'],['darkness','From the Darkness'],
+ ['forgotten','Forgotten Memories'],['fishing','How to Fish'],['infinity','Infinity Blade'],
+ ['happyhills','The Happyhills Homicide'],['fnf','Five New Fangled-Nights'],
+ ['fnv','Fallout New Vegas'],[ 'fo3','Fallout 3'],['obshee','Общее — не про игру']
+];
+var NAMES={}; GAMES.forEach(function(g){NAMES[g[0]]=g[1];});
+var K='rommy.threads.v1';
+var esc=window.Rommy.esc;
+
+function read(){try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return []}}
+function save(t){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){window.Rommy.flash('не смог сохранить: браузер не даёт места');}}
+
+function seed(){
+  if(read().length) return;
+  var now=Date.now(), day=864e5;
+  var t=[
+   {slug:'skyrim',title:'Skyrim вылетает через две минуты в Вайтране',author:'Денис (пример)',seed:true,
+    posts:[{author:'Денис (пример)',text:'Телефон 8/256, Android 13. Захожу в город — через минуту-две вылет на рабочий стол. Пробовал снижать графику, не помогло.',at:now-day*3},
+      {author:'rommy',text:'Похоже на память. Поставь 720p, выключи тени и лимит 60 fps, плюс Unofficial Skyrim Patch. Гайд: fixes.html#g-skyrim',at:now-day*3+36e5}]},
+   {slug:'fnv',title:'NVSE не видит игру — что проверить?',author:'Аня (пример)',seed:true,
+    posts:[{author:'Аня (пример)',text:'Кинула xNVSE в папку, запускаю игру — моды всё равно не работают. Что я делаю не так?',at:now-day*2},
+      {author:'гость',text:'Запускать надо nvse_loader.exe, а не FalloutNV.exe. И 4GB патч применять после установки NVSE.',at:now-day*2+18e5}]},
+   {slug:'gta5-xhyn',title:'GTA V: чёрный экран на Snapdragon 870',author:'Максим (пример)',seed:true,
+    posts:[{author:'Максим (пример)',text:'12/256, устанавливается, но после логотипа чёрный экран и через 10 секунд вылет.',at:now-day},
+      {author:'гость',text:'Смени рендерер (Vulkan → OpenGL) и драйвер GPU. Плюс 25 ГБ свободных должно быть до первого запуска.',at:now-day+9e5}]},
+   {slug:'wc3',title:'Warcraft 3: данные не докачиваются до конца',author:'Илья (пример)',seed:true,
+    posts:[{author:'Илья (пример)',text:'Докачка 2,3 ГБ останавливается на 60% и всё. Место есть.',at:now-day*4},
+      {author:'rommy',text:'Держи игру открытой и не давай экрану гаснуть, либо подключи Wi-Fi и перезапусти загрузку — она продолжается с места обрыва.',at:now-day*4+72e5}]},
+   {slug:'obshee',title:'Кто на чём играет и какой FPS получает?',author:'Кирилл (пример)',seed:true,
+    posts:[{author:'Кирилл (пример)',text:'Давайте соберём статистику: телефон, игра, средний FPS. Полезно тем, кто выбирает устройство.',at:now-day*5}]}
+  ];
+  t.forEach(function(x,i){
+    x.id='seed'+i; x.at=x.posts[0].at; x.posts.forEach(function(p){p.email='';});
+  });
+  save(t);
+}
+
+function renderGameOptions(){
+  var opts=GAMES.map(function(g){return '<option value="'+g[0]+'">'+esc(g[1])+'</option>';}).join('');
+  document.getElementById('gsel').innerHTML='<option value="">все игры</option>'+opts;
+  document.getElementById('nGame').innerHTML=opts;
+}
+
+function lastAt(t){return t.posts.length?t.posts[t.posts.length-1].at:t.at;}
+function dt(ts){var d=new Date(ts);return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+
+function renderList(){
+  seed();
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var gs=document.getElementById('gsel').value;
+  var all=read().filter(function(t){
+    if(gs && t.slug!==gs) return false;
+    if(!q) return true;
+    var hay=(t.title+' '+NAMES[t.slug]+' '+t.posts.map(function(p){return p.text;}).join(' ')).toLowerCase();
+    return hay.indexOf(q)>=0;
+  }).sort(function(a,b){return lastAt(b)-lastAt(a);});
+
+  var box=document.getElementById('threadList');
+  if(!all.length){
+    box.innerHTML='<div class="msg">Тем нет. Создай первую — кнопка «новая тема».</div>';
+    return;
+  }
+  box.innerHTML=all.map(function(t){
+    return '<div class="thread"><div class="th"><a href="#t-'+t.id+'">'+esc(t.title)+'</a><small>'+dt(lastAt(t))+'</small></div>'+
+      '<div class="meta"><span class="badge-pill">'+esc(NAMES[t.slug]||'общее')+'</span>'+
+      '<span>'+esc(t.author)+'</span><span>ответов: '+(t.posts.length-1)+'</span>'+
+      (t.seed?'<span class="badge-pill">пример</span>':'')+'</div></div>';
+  }).join('');
+}
+
+function renderThread(id){
+  seed();
+  var t=read().filter(function(x){return x.id===id;})[0];
+  document.getElementById('threadList').hidden=true;
+  var v=document.getElementById('threadView');
+  v.hidden=false;
+  if(!t){v.innerHTML='<div class="msg err">Такой темы нет — возможно, она была в другом браузере.</div><p><a class="btn" href="forum.html">к списку тем</a></p>';return;}
+  var u=window.RommyAuth.user();
+  v.innerHTML='<p><a class="btn btn-sm" href="forum.html">← все темы</a></p>'+
+    '<h2 class="sec">'+esc(t.title)+'</h2>'+
+    '<p class="statusbar"><span class="badge-pill">'+esc(NAMES[t.slug]||'общее')+'</span><span>автор: '+esc(t.author)+' · '+dt(t.at)+'</span></p>'+
+    t.posts.map(function(p,i){
+      return '<div class="post"><div class="phead"><b>'+esc(p.author)+'</b><span>#'+(i+1)+' · '+dt(p.at)+'</span></div>'+
+        '<div class="ptext">'+esc(p.text)+'</div></div>';
+    }).join('')+
+    (u
+      ? '<form id="fReply" style="margin-top:8px"><label class="fl" for="rText">ответ от '+esc(u.name)+'</label>'+
+        '<textarea id="rText" placeholder="Что помогло, что не помогло, какой телефон" maxlength="2000" required></textarea>'+
+        '<button class="btn btn-main" type="submit">отправить</button></form>'
+      : '<div class="msg">Чтобы ответить, войди или зарегистрируйся — кнопка входа вверху страницы.</div>'+
+        '<button class="btn btn-main" type="button" id="goLogin">войти</button>');
+
+  var f=d_or_null('#fReply');
+  if(f) f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var txt=document.getElementById('rText').value.trim();
+    if(!txt) return;
+    var all=read();
+    for(var i=0;i<all.length;i++){
+      if(all[i].id===id){
+        var me=window.RommyAuth.user();
+        all[i].posts.push({author:me.name,email:me.email,text:txt,at:Date.now()});
+      }
+    }
+    save(all);
+    renderThread(id);
+    window.Rommy.flash('ответ добавлен');
+  });
+  var gl=d_or_null('#goLogin');
+  if(gl) gl.addEventListener('click',function(){window.RommyAuth.open('login');});
+  window.scrollTo(0,0);
+}
+function d_or_null(s){return document.querySelector(s);}
+
+document.getElementById('newBtn').addEventListener('click',function(){
+  if(!window.RommyAuth.require('login')) return;
+  document.getElementById('newPanel').hidden=false;
+  document.getElementById('nTitle').focus();
+});
+document.getElementById('cancelNew').addEventListener('click',function(){
+  document.getElementById('newPanel').hidden=true;
+});
+document.getElementById('gsel').addEventListener('change',renderList);
+document.getElementById('q').addEventListener('input',renderList);
+document.getElementById('newBtn').addEventListener('click',function(){
+  var gs=document.getElementById('gsel').value;
+  if(gs && !document.getElementById('newPanel').hidden) document.getElementById('nGame').value=gs;
+});
+
+document.getElementById('fNew').addEventListener('submit',function(e){
+  e.preventDefault();
+  var u=window.RommyAuth.user();
+  if(!u){window.RommyAuth.open('login');return;}
+  var slug=document.getElementById('nGame').value;
+  var title=document.getElementById('nTitle').value.trim();
+  var text=document.getElementById('nText').value.trim();
+  if(title.length<4){window.Rommy.flash('заголовок покороче не надо, минимум 4 символа');return;}
+  if(text.length<5){window.Rommy.flash('напиши чуть подробнее');return;}
+  var all=read();
+  var id='t'+Date.now().toString(36);
+  all.push({id:id,slug:slug,title:title,author:u.name,at:Date.now(),
+    posts:[{author:u.name,email:u.email,text:text,at:Date.now()}]});
+  save(all);
+  document.getElementById('fNew').reset();
+  document.getElementById('newPanel').hidden=true;
+  location.hash='t-'+id;
+  renderThread(id);
+  window.Rommy.flash('тема создана');
+});
+
+function route(){
+  var h=location.hash.replace('#','');
+  if(h.indexOf('t-')===0){
+    renderThread(h.slice(2));
+    return;
+  }
+  document.getElementById('threadView').hidden=true;
+  document.getElementById('threadList').hidden=false;
+  if(h.indexOf('g-')===0){
+    var slug=h.slice(2);
+    if(NAMES[slug]){
+      document.getElementById('gsel').value=slug;
+      document.getElementById('nGame').value=slug;
+    }
+  }
+  renderList();
+}
+
+document.addEventListener('rommy-auth',function(){
+  var h=location.hash.replace('#','');
+  if(h.indexOf('t-')===0) renderThread(h.slice(2));
+});
+
+renderGameOptions();
+document.getElementById('localNote').innerHTML='<b>Режим без сервера.</b> Вход, темы и ответы хранятся в памяти этого браузера (localStorage). '+
+  'Зарегистрированный на телефоне аккаунт не появится на компьютере. Для общих аккаунтов нужен бэкенд — ключи в <code class="k">config.js</code>.';
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+</body>
+</html>
