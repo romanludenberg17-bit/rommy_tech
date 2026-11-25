@@ -39,6 +39,7 @@
 <div class="side">
 <a class="navbtn" href="#base">ЧТО ДЕЛАТЬ<small>общая база по портам</small></a>
 <a class="navbtn" href="#fnv">FALLOUT NV<small>NVSE, 4GB, вылеты</small></a>
+<a class="navbtn" href="#fd2">FALLOUT DROID 2.0<small>нативный порт: фиксы</small></a>
 <a class="navbtn" href="#list">ВСЕ ИГРЫ<small>31 гайд по играм</small></a>
 <a class="navbtn" href="forum.html">ФОРУМ<small>спросить людей</small></a>
 <a class="navbtn" href="index.html#games">КАТАЛОГ<small>ссылки на скачивание</small></a>
@@ -149,7 +150,7 @@
 <li><b>Вылет через 5–20 минут, «Out of memory»</b> — движок упирается в лимит 2 ГБ памяти. Лечится FNV 4GB Patcher (тот самый «4gb патч»).</li>
 <li><b>Краши при переходе между локациями и загрузке сейвов</b> — NVAC (New Vegas Anti Crash) и JIP LN NVSE Plugin.</li>
 <li><b>Мышь не видна или не двигается</b> — в Fallout Droid переключи режим мыши на относительный и включи экранную раскладку.</li>
-<li><b>Виснет «Starting the session…»</b> — незакрытый баг контейнера: уменьши разрешение и перезапусти контейнер, помогает не всегда.</li>
+<li><b>Виснет «Starting the session…»</b> — баг старой версии на контейнере: уменьши разрешение и перезапусти. Надёжнее перейти на <a href="#fd2">Fallout Droid 2.0</a>.</li>
 </ul>
 <h4>Пошагово</h4>
 <ol class="steps">
@@ -193,6 +194,41 @@
 </div>
 </details>
 
+<h2 class="sec" id="fd2">Fallout Droid 2.0 (нативный порт) — частые проблемы</h2>
+<p>Новая версия с 22 ноября работает без контейнера, поэтому часть старых советов (DXVK, nvse_loader.exe, 4GB патч) к ней не относится: расширители скриптов уже встроены в движок. Сборка в стадии альфы — обновления выходят почти каждый день.</p>
+
+<details class="fix" open>
+<summary>Fallout Droid 2.0: вылеты, лаги, кракозябры<span class="pill">новое</span></summary>
+<div class="fixbody">
+<h4>Частые проблемы</h4>
+<ul class="prob">
+<li><b>Вместо русского текста — кракозябры или нет текстур</b> — скачай <a href="https://t.me/rommy_apps/616">Data.rar</a> (2,4 ГБ), распакуй в папку игры и включи все пункты в менеджере модов. Полная русификация Fallout 3 обещана отдельно.</li>
+<li><b>Fallout 3 падает с ошибкой видеодрайвера на Snapdragon 8 Gen 4/5</b> — исправлено в <a href="https://t.me/rommy_apps/625">alpha49</a>, обновись.</li>
+<li><b>Лаги и нехватка памяти на слабом телефоне</b> — профиль Potato, разрешение ниже (вплоть до 360p), текстуры пониже. Перед запуском закрой фоновые приложения.</li>
+<li><b>Телефон греется, FPS падает со временем</b> — включи термо-режим: он снижает разрешение при перегреве и возвращает его после остывания.</li>
+<li><b>Мерцают тени</b> — солнечные тени на Snapdragon пока нестабильны, выключи их.</li>
+<li><b>Мерцание LOD и текстур, неточная вода</b> — известные баги альфы, их чинят в следующих сборках.</li>
+<li><b>Не работают ENB / ReShade</b> — и не заработают: DLL-плагины на Android не запускаются. Моды на NVSE, JIP LN, JohnnyGuitar и kNVSE работают — они встроены в движок.</li>
+</ul>
+<h4>Пошагово</h4>
+<ol class="steps">
+<li>Установи <a href="https://t.me/rommy_apps/625">APK 2.0</a> — он ставится отдельно и не сносит старый Fallout Droid.</li>
+<li>Дай доступ к файлам, сними ограничения батареи для приложения.</li>
+<li>Укажи папку с игрой: New Vegas и/или Fallout 3 GOTY.</li>
+<li>Если русский текст ломается — поставь Data.rar (см. выше).</li>
+<li>Нажми «сбросить под мой телефон» в графике, потом подкручивай профиль.</li>
+<li>Старые сейвы (.fos) — «Сейвы» → «Добавить сейвы».</li>
+<li>Что-то сломалось — «Share logs» в лаунчере и отправь логи автору в чат <a href="https://t.me/repack_by">@repack_by</a>.</li>
+</ol>
+<h4>Старый Fallout Droid (v1.1.x) на Mali, Exynos, Tensor, Dimensity</h4>
+<ul class="prob">
+<li>С v1.1.86 лаунчер сам подбирает рендер и запоминает рабочий. Если игра всё равно падает — «Графика» → рендер: DXVK 1.10 (для старых драйверов) или WineD3D, кнопка «Сброс» возвращает автовыбор.</li>
+<li>Обновления ставятся поверх — сейвы, моды и настройки сохраняются.</li>
+</ul>
+<p style="margin-top:8px"><a class="btn btn-sm" href="https://t.me/rommy_apps/614">анонс 2.0</a> <a class="btn btn-sm" href="https://t.me/rommy_apps/624">alpha49</a> <a class="btn btn-sm" href="forum.html#g-fnv">спросить на форуме</a></p>
+</div>
+</details>
+
 <h2 class="sec" id="list">Все игры канала</h2>
 <p class="statusbar"><span>клик по игре — раскрывается гайд</span><span><button class="btn btn-sm" type="button" id="expandAll">раскрыть всё</button></span></p>
 <div class="fixnav" id="fixnav"></div>
@@ -207,11 +243,11 @@
 <div class="badges">
 <div class="badge">СДЕЛАНО<br>В БЛОКНОТЕ</div>
 <div class="badge">ЛУЧШЕ ВСЕГО<br>1024×768</div>
-<div class="badge">38 ГАЙДОВ<br>БЕЗ ВОДЫ</div>
+<div class="badge">39 ГАЙДОВ<br>БЕЗ ВОДЫ</div>
 <div class="badge">БЕЗ<br>РЕГИСТРАЦИИ</div>
 </div>
 © 2003—2026 rommy tech · неофициальная страница канала <a href="https://t.me/rommy_apps">@rommy_apps</a><br>
-Обновлено 16 ноября 2026 года · <a href="#top">наверх</a>
+Обновлено 25 ноября 2026 года · посетителей за всё время: <b data-gcount="visitors">…</b> · просмотров: <b data-gcount="views">…</b> · <a href="#top">наверх</a>
 </div>
 
 </div>

@@ -290,9 +290,57 @@
     });
   }
 
+  /* ---------- Общий счётчик посетителей за всё время ----------
+     Сайт статический, поэтому числа хранит бесплатный сервис Abacus (abacus.jasoncameron.dev).
+     visitors — уникальные посетители: каждый браузер засчитывается один раз за всё время;
+     views    — все открытия страниц сайта (любой вкладки).
+     Пространство имён можно сменить в config.js: counterNamespace. */
+  var COUNTER_API = 'https://abacus.jasoncameron.dev';
+  var COUNTER_NS = CFG.counterNamespace || 'rommy-tech-site';
+  var K_COUNTED = 'rommy.counted.v1';
+
+  function counterCall(action, key) {
+    var url = COUNTER_API + '/' + action + '/' + encodeURIComponent(COUNTER_NS) + '/' + key;
+    return fetch(url, { cache: 'no-store' }).then(function (r) {
+      if (r.status === 404 && action === 'get') return { value: 0 };
+      if (!r.ok) throw new Error('counter ' + r.status);
+      return r.json();
+    }).then(function (j) {
+      var v = parseInt(j && j.value, 10);
+      if (isNaN(v)) throw new Error('counter: bad answer');
+      return v;
+    });
+  }
+
+  function paintCount(kind, value) {
+    document.querySelectorAll('[data-gcount="' + kind + '"]').forEach(function (el) {
+      if (value == null) { el.textContent = '—'; el.title = 'счётчик сейчас недоступен'; return; }
+      if (el.classList.contains('counter')) {
+        var s = String(value).padStart(6, '0');
+        el.innerHTML = '';
+        for (var i = 0; i < s.length; i++) { var sp = document.createElement('span'); sp.textContent = s[i]; el.appendChild(sp); }
+      } else {
+        el.textContent = value.toLocaleString('ru-RU');
+      }
+    });
+  }
+
+  function globalCounter() {
+    if (!window.fetch) { paintCount('visitors', null); paintCount('views', null); return; }
+    var counted = false;
+    try { counted = localStorage.getItem(K_COUNTED) === '1'; } catch (e) {}
+    counterCall(counted ? 'get' : 'hit', 'visitors').then(function (v) {
+      if (!counted) { try { localStorage.setItem(K_COUNTED, '1'); } catch (e) {} }
+      paintCount('visitors', v);
+    }).catch(function () { paintCount('visitors', null); });
+    counterCall('hit', 'views').then(function (v) { paintCount('views', v); })
+      .catch(function () { paintCount('views', null); });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initTheme();
     paintSlot();
+    globalCounter();
     // подсветка активной вкладки по имени файла
     var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
     document.querySelectorAll('.tabs a.tab').forEach(function (a) {
